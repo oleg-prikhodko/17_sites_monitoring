@@ -4,7 +4,9 @@ import whois
 
 
 def load_urls4check(path):
-    pass
+    with open(path) as urls_file:
+        urls = [line.strip() for line in urls_file]
+        return urls
 
 def is_server_respond_with_200(url):
     response = urlopen(url)
