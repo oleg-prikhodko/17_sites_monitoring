@@ -62,6 +62,19 @@ def validate_urls_argument(urls_filepath):
         raise ValueError("Directories not allowed")
 
 
+def print_server_health_status(url, responded_with_ok, more_than_month_left):
+    status_message = "response {} OK".format(
+        "is" if responded_with_ok else "is not"
+    )
+    expiration_date_message = "expiry date is {} than month away".format(
+        "more" if more_than_month_left else "less"
+    )
+    message = "[{}] {}, {}".format(
+        url, status_message, expiration_date_message
+    )
+    print(message)
+
+
 if __name__ == "__main__":
     urls_filepath = load_urls_filepath_from_argument()
     try:
@@ -76,16 +89,10 @@ if __name__ == "__main__":
             expiration_date = get_domain_expiration_date(
                 get_domain_from_url(url)
             )
+            more_than_month_left = is_month_away(expiration_date)
         except (requests.exceptions.RequestException, ValueError) as error:
             sys.exit(error)
 
-        status_message = "response {} OK".format(
-            "is" if responded_with_ok else "is not"
+        print_server_health_status(
+            url, responded_with_ok, more_than_month_left
         )
-        expiration_date_message = "expiry date is {} than month away".format(
-            "more" if is_month_away(expiration_date) else "less"
-        )
-        message = "[{}] {}, {}".format(
-            url, status_message, expiration_date_message
-        )
-        print(message)
