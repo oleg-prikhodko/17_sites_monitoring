@@ -1,3 +1,5 @@
+import argparse
+import os.path
 import sys
 from datetime import datetime, timedelta
 from urllib.error import URLError
@@ -7,7 +9,7 @@ from urllib.request import urlopen
 import whois
 
 
-def load_urls(path):
+def load_urls_from_file(path):
     with open(path) as urls_file:
         urls = [line.strip() for line in urls_file]
         return urls
@@ -34,8 +36,28 @@ def is_month_away(datetime_to_check):
     return datetime_to_check > month_from_now
 
 
+def load_urls_filepath_from_argument():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("urls")
+    arguments = parser.parse_args()
+    return arguments.urls
+
+
+def validate_urls_argument(urls_filepath):
+    if not os.path.exists(urls_filepath):
+        raise ValueError("File not exists")
+    elif os.path.isdir(urls_filepath):
+        raise ValueError("Directories not allowed")
+
+
 if __name__ == "__main__":
-    urls = load_urls("urls.txt")
+    urls_filepath = load_urls_filepath_from_argument()
+    try:
+        validate_urls_argument(urls_filepath)
+    except ValueError as error:
+        sys.exit(error)
+
+    urls = load_urls_from_file(urls_filepath)
     registry_expiration_index = 0
 
     for url in urls:
