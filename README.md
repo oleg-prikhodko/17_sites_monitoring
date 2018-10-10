@@ -1,6 +1,6 @@
 # Sites Monitoring Utility
 
-Program outputs server health status from given urls (taken from an arbitrary file) including: has server responded with status code 200 and is domain name registration expiry date is at least month away
+Program outputs server health status from given urls (taken from an arbitrary file) including: has server responded with status code 200 and is domain name registration expiry date at least month away
 
 # Quickstart
 
