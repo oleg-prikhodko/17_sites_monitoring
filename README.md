@@ -4,7 +4,7 @@ Program outputs server health status from given urls (taken from an arbitrary fi
 
 # Quickstart
 
-Program requires __python-whois__ in order to get registration info. Installation:
+Program requires __python-whois__ in order to get registration info and __requests__ for http interaction. Installation:
 
 ```bash
 $ pip install -r requirements.txt
