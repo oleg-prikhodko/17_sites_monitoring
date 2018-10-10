@@ -21,7 +21,20 @@ def has_server_responded_with_200(url):
 
 def get_domain_expiration_date(domain_name):
     domain_info = whois.whois(domain_name)
-    return domain_info.expiration_date
+    expiration_date = domain_info.expiration_date
+
+    if expiration_date is None:
+        raise ValueError(
+            "Could not get expiry date for [{}]".format(domain_name)
+        )
+
+    registry_expiration_index = 0
+    expiration_date = (
+        expiration_date
+        if isinstance(expiration_date, datetime)
+        else expiration_date[registry_expiration_index]
+    )
+    return expiration_date
 
 
 def get_domain_from_url(url):
@@ -57,26 +70,18 @@ if __name__ == "__main__":
         sys.exit(error)
 
     urls = load_urls_from_file(urls_filepath)
-    registry_expiration_index = 0
-
     for url in urls:
         try:
-            status_message = "response {} OK".format(
-                "is" if has_server_responded_with_200(url) else "is not"
+            responded_with_ok = has_server_responded_with_200(url)
+            expiration_date = get_domain_expiration_date(
+                get_domain_from_url(url)
             )
-        except requests.exceptions.RequestException as error:
+        except (requests.exceptions.RequestException, ValueError) as error:
             sys.exit(error)
 
-        expiration_date = get_domain_expiration_date(get_domain_from_url(url))
-        if expiration_date is None:
-            sys.exit("Could not get expiry date for [{}]".format(url))
-
-        expiration_date = (
-            expiration_date
-            if isinstance(expiration_date, datetime)
-            else expiration_date[registry_expiration_index]
+        status_message = "response {} OK".format(
+            "is" if responded_with_ok else "is not"
         )
-
         expiration_date_message = "expiry date is {} than month away".format(
             "more" if is_month_away(expiration_date) else "less"
         )
