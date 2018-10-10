@@ -16,7 +16,7 @@ def load_urls_from_file(path):
 
 def has_server_responded_with_200(url):
     response = requests.get(url)
-    return response.status_code == 200
+    return response.ok
 
 
 def get_domain_expiration_date(domain_name):
@@ -79,20 +79,16 @@ if __name__ == "__main__":
     urls_filepath = load_urls_filepath_from_argument()
     try:
         validate_urls_argument(urls_filepath)
-    except ValueError as error:
-        sys.exit(error)
+        urls = load_urls_from_file(urls_filepath)
 
-    urls = load_urls_from_file(urls_filepath)
-    for url in urls:
-        try:
+        for url in urls:
             responded_with_ok = has_server_responded_with_200(url)
             expiration_date = get_domain_expiration_date(
                 get_domain_from_url(url)
             )
             more_than_month_left = is_month_away(expiration_date)
-        except (requests.exceptions.RequestException, ValueError) as error:
-            sys.exit(error)
-
-        print_server_health_status(
-            url, responded_with_ok, more_than_month_left
-        )
+            print_server_health_status(
+                url, responded_with_ok, more_than_month_left
+            )
+    except (requests.exceptions.RequestException, ValueError) as error:
+        sys.exit(error)
