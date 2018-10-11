@@ -24,9 +24,7 @@ def get_domain_expiration_date(domain_name):
     expiration_date = domain_info.expiration_date
 
     if expiration_date is None:
-        raise ValueError(
-            "Could not get expiry date for [{}]".format(domain_name)
-        )
+        return None
 
     registry_expiration_index = 0
     expiration_date = (
@@ -60,13 +58,18 @@ def validate_urls_argument(urls_filepath):
         raise ValueError("Directories not allowed")
 
 
-def print_server_health_status(url, responded_with_ok, more_than_month_left):
+def print_server_health_status(
+    url, responded_with_ok, more_than_month_left=None
+):
     status_message = "response {} OK".format(
         "is" if responded_with_ok else "is not"
     )
-    expiration_date_message = "expiry date is {} than month away".format(
-        "more" if more_than_month_left else "less"
-    )
+    if more_than_month_left is None:
+        expiration_date_message = "expiry date is unknown"
+    else:
+        expiration_date_message = "expiry date is {} than month away".format(
+            "more" if more_than_month_left else "less"
+        )
     message = "[{}] {}, {}".format(
         url, status_message, expiration_date_message
     )
@@ -85,14 +88,17 @@ if __name__ == "__main__":
                 get_domain_from_url(url)
             )
 
-            average_days_in_month = 30
-            month_period = timedelta(days=average_days_in_month)
-            more_than_month_left = is_further_in_time(
-                expiration_date, month_period
-            )
+            if expiration_date is not None:
+                average_days_in_month = 30
+                month_period = timedelta(days=average_days_in_month)
+                more_than_month_left = is_further_in_time(
+                    expiration_date, month_period
+                )
+                print_server_health_status(
+                    url, responded_with_ok, more_than_month_left
+                )
+            else:
+                print_server_health_status(url, responded_with_ok)
 
-            print_server_health_status(
-                url, responded_with_ok, more_than_month_left
-            )
     except (requests.exceptions.RequestException, ValueError) as error:
         sys.exit(error)
