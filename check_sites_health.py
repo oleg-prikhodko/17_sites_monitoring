@@ -41,11 +41,9 @@ def get_domain_from_url(url):
     return urlsplit(url).netloc
 
 
-def is_month_away(datetime_to_check):
-    average_days_in_month = 30
-    month_period = timedelta(days=average_days_in_month)
-    month_from_now = datetime.now() + month_period
-    return datetime_to_check > month_from_now
+def is_further_in_time(datetime_to_check, time_period_from_now):
+    future_datetime = datetime.now() + time_period_from_now
+    return datetime_to_check > future_datetime
 
 
 def load_urls_filepath_from_argument():
@@ -86,7 +84,13 @@ if __name__ == "__main__":
             expiration_date = get_domain_expiration_date(
                 get_domain_from_url(url)
             )
-            more_than_month_left = is_month_away(expiration_date)
+
+            average_days_in_month = 30
+            month_period = timedelta(days=average_days_in_month)
+            more_than_month_left = is_further_in_time(
+                expiration_date, month_period
+            )
+
             print_server_health_status(
                 url, responded_with_ok, more_than_month_left
             )
