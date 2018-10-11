@@ -14,7 +14,7 @@ def load_urls_from_file(path):
         return urls
 
 
-def has_server_responded_with_200(url):
+def has_server_responded_with_ok(url):
     response = requests.get(url)
     return response.ok
 
@@ -82,7 +82,7 @@ if __name__ == "__main__":
         urls = load_urls_from_file(urls_filepath)
 
         for url in urls:
-            responded_with_ok = has_server_responded_with_200(url)
+            responded_with_ok = has_server_responded_with_ok(url)
             expiration_date = get_domain_expiration_date(
                 get_domain_from_url(url)
             )
