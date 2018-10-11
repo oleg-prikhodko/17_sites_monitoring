@@ -78,6 +78,9 @@ def print_server_health_status(
 
 if __name__ == "__main__":
     urls_filepath = load_urls_filepath_from_argument()
+    average_days_in_month = 30
+    month_period = timedelta(days=average_days_in_month)
+
     try:
         validate_urls_argument(urls_filepath)
         urls = load_urls_from_file(urls_filepath)
@@ -87,18 +90,14 @@ if __name__ == "__main__":
             expiration_date = get_domain_expiration_date(
                 get_domain_from_url(url)
             )
-
-            if expiration_date is not None:
-                average_days_in_month = 30
-                month_period = timedelta(days=average_days_in_month)
-                more_than_month_left = is_further_in_time(
-                    expiration_date, month_period
-                )
-                print_server_health_status(
-                    url, responded_with_ok, more_than_month_left
-                )
-            else:
-                print_server_health_status(url, responded_with_ok)
+            more_than_month_left = (
+                is_further_in_time(expiration_date, month_period)
+                if expiration_date is not None
+                else None
+            )
+            print_server_health_status(
+                url, responded_with_ok, more_than_month_left
+            )
 
     except (requests.exceptions.RequestException, ValueError) as error:
         sys.exit(error)
