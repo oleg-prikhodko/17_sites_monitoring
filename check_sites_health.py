@@ -23,7 +23,10 @@ def has_server_responded_with_ok(url):
 
 
 def get_domain_expiration_date(domain_name):
-    domain_info = whois.whois(domain_name)
+    try:
+        domain_info = whois.whois(domain_name)
+    except OSError:
+        return None
     expiration_date = domain_info.expiration_date
 
     if expiration_date is None:
