@@ -44,11 +44,11 @@ def is_further_in_time(datetime_to_check, time_period_from_now):
     return datetime_to_check > future_datetime
 
 
-def load_urls_filepath_from_argument():
+def load_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("urls")
     arguments = parser.parse_args()
-    return arguments.urls
+    return arguments
 
 
 def validate_urls_argument(urls_filepath):
@@ -77,7 +77,7 @@ def print_server_health_status(
 
 
 if __name__ == "__main__":
-    urls_filepath = load_urls_filepath_from_argument()
+    urls_filepath = load_arguments().urls
     average_days_in_month = 30
     month_period = timedelta(days=average_days_in_month)
 
