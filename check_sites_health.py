@@ -86,21 +86,19 @@ if __name__ == "__main__":
 
     try:
         validate_urls_argument(urls_filepath)
-        urls = load_urls_from_file(urls_filepath)
-
-        for url in urls:
-            responded_with_ok = has_server_responded_with_ok(url)
-            expiration_date = get_domain_expiration_date(
-                get_domain_from_url(url)
-            )
-            further_in_time = (
-                is_further_in_time(expiration_date, month_period)
-                if expiration_date is not None
-                else None
-            )
-            print_server_health_status(
-                url, responded_with_ok, average_days_in_month, further_in_time
-            )
-
     except ValueError as error:
         sys.exit(error)
+
+    urls = load_urls_from_file(urls_filepath)
+
+    for url in urls:
+        responded_with_ok = has_server_responded_with_ok(url)
+        expiration_date = get_domain_expiration_date(get_domain_from_url(url))
+        further_in_time = (
+            is_further_in_time(expiration_date, month_period)
+            if expiration_date is not None
+            else None
+        )
+        print_server_health_status(
+            url, responded_with_ok, average_days_in_month, further_in_time
+        )
