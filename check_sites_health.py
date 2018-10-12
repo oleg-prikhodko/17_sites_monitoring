@@ -59,16 +59,16 @@ def validate_urls_argument(urls_filepath):
 
 
 def print_server_health_status(
-    url, responded_with_ok, more_than_month_left=None
+    url, responded_with_ok, days, further_in_time=None
 ):
     status_message = "response {} OK".format(
         "is" if responded_with_ok else "is not"
     )
-    if more_than_month_left is None:
+    if further_in_time is None:
         expiration_date_message = "expiry date is unknown"
     else:
-        expiration_date_message = "expiry date is {} than month away".format(
-            "more" if more_than_month_left else "less"
+        expiration_date_message = "expiry date is {} than {} days away".format(
+            "more" if further_in_time else "less", days
         )
     message = "[{}] {}, {}".format(
         url, status_message, expiration_date_message
@@ -90,13 +90,13 @@ if __name__ == "__main__":
             expiration_date = get_domain_expiration_date(
                 get_domain_from_url(url)
             )
-            more_than_month_left = (
+            further_in_time = (
                 is_further_in_time(expiration_date, month_period)
                 if expiration_date is not None
                 else None
             )
             print_server_health_status(
-                url, responded_with_ok, more_than_month_left
+                url, responded_with_ok, average_days_in_month, further_in_time
             )
 
     except (requests.exceptions.RequestException, ValueError) as error:
