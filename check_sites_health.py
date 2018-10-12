@@ -15,7 +15,10 @@ def load_urls_from_file(path):
 
 
 def has_server_responded_with_ok(url):
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except requests.exceptions.RequestException:
+        return False
     return response.ok
 
 
@@ -99,5 +102,5 @@ if __name__ == "__main__":
                 url, responded_with_ok, average_days_in_month, further_in_time
             )
 
-    except (requests.exceptions.RequestException, ValueError) as error:
+    except ValueError as error:
         sys.exit(error)
